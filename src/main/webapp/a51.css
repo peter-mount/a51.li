@@ -1,0 +1,167 @@
+/* 
+    Created on : May 26, 2014, 12:15:28 PM
+    Author     : Peter T Mount
+*/
+
+body {
+    font-family: Verdana,Helvetica,Arial,sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.left { float: left; }
+.right { float: right; }
+.clear { clear: both; }
+
+#main-outer {
+    margin: 0;
+    padding: 0;
+    font-family: Arial,sans-serif;
+    background: #fff;
+    color: #000;
+}
+
+/* Main content */
+
+#main-body {
+    background: #ccc;
+    margin: 1px;
+    background: #fff;
+    color: #000;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+/* Footer */
+
+#footer {
+    height: 1.5em;
+    background: #fff;
+    color: #000;
+}
+#footer-outer {
+    display: table;
+    table-layout: auto;
+    width: 100%;
+}
+#footer-inner {
+    display: table-row;
+    background: #fff;
+    color: #000;
+}
+#footer-left, #footer-center,#footer-right {
+    display: table-cell;
+    padding: 3px;
+}
+#footer-left {
+    text-align: left;
+}
+#footer-center {
+    text-align: center;
+}
+#footer-right {
+    text-align: right;
+    text-wrap: avoid;
+}
+
+#footer-inner address {
+    text-align: center;
+}
+#footer-inner div {
+    font-size: 0.6em;
+    font-family: Arial,sans-serif;
+    border-top: 1px solid black;
+}
+
+#footer-inner div a {
+    margin-left: 2px;
+    margin-right: 3px;
+    color: #00f;
+}
+#footer-inner div a:visited { color: #00f; }
+#footer-inner div a:hover { color: #00f; }
+
+.memo {
+    margin: 1em;
+    padding: 0.5em;
+}
+
+.memologo {
+    vertical-align: text-bottom;
+    float: right;
+}
+
+.memotitle { }
+.memotitle h1 { margin: 0; }
+
+.memometa {
+    font-size: small;
+}
+
+.memotext {
+    clear:both;
+    padding-top: 1em;
+}
+
+.share {
+    clear:both;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    font-size: 11px;
+}
+
+.viewhtml {
+
+}
+
+.viewtext {
+    font-family: monospace;
+    font-size: 10px;
+}
+
+.viewlog {
+    /*
+    font: normal 12px/1.5 "Lucida Grande", arial, sans-serif;
+    width: 300px;
+    */
+    font-family: monospace;
+    font-size: 10px;
+    margin: 0 auto 10px;
+    padding: 6px 5px 4px 42px;
+    position: relative;
+    color: #444;
+    line-height: 20px;
+    border: 1px solid #d2d2d2;
+
+    background: #fff;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#d9eaf3), color-stop(4%, #fff)) 0 4px;
+    background: -webkit-linear-gradient(top, #d9eaf3 0%, #fff 8%) 0 4px;
+    background: -moz-linear-gradient(top, #d9eaf3 0%, #fff 8%) 0 4px;
+    background: -ms-linear-gradient(top, #d9eaf3 0%, #fff 8%) 0 4px;
+    background: -o-linear-gradient(top, #d9eaf3 0%, #fff 8%) 0 4px;
+    background: linear-gradient(top, #d9eaf3 0%, #fff 8%) 0 4px;
+
+    -webkit-background-size: 100% 20px;
+    -moz-background-size: 100% 20px;
+    -ms-background-size: 100% 20px;
+    -o-background-size: 100% 20px;
+    background-size: 100% 20px;
+
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+}
+.viewlog::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    top: 0;
+    left: 30px;
+    bottom: 0;
+    border: 1px solid;
+    border-color: transparent #efe4e4;
+}
