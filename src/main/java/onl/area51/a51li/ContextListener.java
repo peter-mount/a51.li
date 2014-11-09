@@ -38,13 +38,14 @@ public class ContextListener
     public void contextInitialized( ServletContextEvent sce )
     {
         DataSource dataSource;
-        String rabbitUser, rabbitPassword;
+        String rabbitUser, rabbitPassword, rabbitHost;
 
         try
         {
             dataSource = InitialContext.doLookup( "java:/comp/env/jdbc/links" );
-            rabbitUser = InitialContext.doLookup( "java:/comp/env/rabbit/a51i/user" );
-            rabbitPassword = InitialContext.doLookup( "java:/comp/env/rabbit/a51i/password" );
+            rabbitUser = InitialContext.doLookup( "java:/comp/env/rabbit/a51li/user" );
+            rabbitPassword = InitialContext.doLookup( "java:/comp/env/rabbit/a51li/password" );
+            rabbitHost = InitialContext.doLookup( "java:/comp/env/rabbit/a51li/host" );
         }
         catch( NamingException ex )
         {
@@ -52,7 +53,7 @@ public class ContextListener
         }
 
         TwitterManager.INSTANCE.setDataSource( dataSource );
-        LinkManager.INSTANCE.contextInitialized( dataSource, rabbitUser, rabbitPassword, rabbitUser );
+        LinkManager.INSTANCE.contextInitialized( dataSource, rabbitUser, rabbitPassword, rabbitHost );
     }
 
     @Override
