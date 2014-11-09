@@ -63,6 +63,8 @@ public enum LinkManager
 
     public void contextInitialized( DataSource dataSource, String rabbitUser, String rabbitPassword, String rabbitHost )
     {
+        this.dataSource = dataSource;
+
         rabbitConnection = new RabbitConnection( rabbitUser, rabbitPassword, rabbitHost );
 
         // Twitter bot - handle outbound tweets
