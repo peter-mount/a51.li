@@ -35,6 +35,8 @@
                     <h3>Is this service available to non Area51 projects?</h3>
                     <p>No it is not. This is partly due to spam on my original short url service from a few years ago.</p>
                     <p>This may change but don't hold your breath!</p>
+                    <h3>Is the source code available?</h3>
+                    <p>The source is available over on <a href="/1h">GitHub</a>.</p>
                 </div>
             </div>
             <div id="footer">
