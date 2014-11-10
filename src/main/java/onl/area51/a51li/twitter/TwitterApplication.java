@@ -27,11 +27,11 @@ public class TwitterApplication
 {
 
     public static final SQLFunction<ResultSet, TwitterApplication> fromSQL = rs -> new TwitterApplication(
-            rs.getLong( "a.id" ),
-            rs.getString( "a.appname" ),
-            rs.getString( "a.key" ),
-            rs.getString( "a.secret" ),
-            rs.getBoolean( "a.enabled" )
+            rs.getLong( "a_id" ),
+            rs.getString( "a_appname" ),
+            rs.getString( "a_key" ),
+            rs.getString( "a_secret" ),
+            rs.getBoolean( "a_enabled" )
     );
 
     private final long id;
