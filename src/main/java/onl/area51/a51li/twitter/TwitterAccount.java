@@ -29,7 +29,7 @@ import uk.trainwatch.util.sql.SQLFunction;
 public class TwitterAccount
 {
 
-    public static final String SELECT_SQL = "SELECT t.id as t_id, t.account as t_account, t.token as t.token, t.secret as t_secret, t.application as t_application, a.id as a_id, a.appname as a_appname, a.key as a_key, a.secret as a_secret, a.enabled as a_enabled FROM twitter t"
+    public static final String SELECT_SQL = "SELECT t.id as t_id, t.account as t_account, t.token as t_token, t.secret as t_secret, t.application as t_application, a.id as a_id, a.appname as a_appname, a.key as a_key, a.secret as a_secret, a.enabled as a_enabled FROM twitter t"
                                             + " INNER JOIN user_twitter ut ON t.id = ut.twitterid"
                                             + " INNER JOIN users u ON ut.userid = u.id"
                                             + " INNER JOIN twitapp a ON t.application = a.id"
