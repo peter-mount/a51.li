@@ -23,7 +23,6 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import javax.sql.DataSource;
 import onl.area51.a51li.twitter.TwitterManager;
-import uk.trainwatch.util.DaemonThreadFactory;
 
 /**
  *
@@ -59,7 +58,6 @@ public class ContextListener
     @Override
     public void contextDestroyed( ServletContextEvent sce )
     {
-        DaemonThreadFactory.INSTANCE.shutdown();
         LinkManager.INSTANCE.contextDestroyed();
     }
 
