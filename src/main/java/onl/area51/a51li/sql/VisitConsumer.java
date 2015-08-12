@@ -19,6 +19,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
 import javax.json.JsonObject;
 import javax.sql.DataSource;
 import uk.trainwatch.util.JsonUtils;
@@ -28,32 +32,25 @@ import uk.trainwatch.util.JsonUtils;
  * <p>
  * @author Peter T Mount
  */
+@ApplicationScoped
 public class VisitConsumer
         implements Consumer<JsonObject>
 {
 
-    private final DataSource dataSource;
-
-    public VisitConsumer( DataSource dataSource )
-    {
-        this.dataSource = dataSource;
-    }
+    @Resource(name = "jdbc/links")
+    private DataSource dataSource;
 
     @Override
     public void accept( JsonObject t )
     {
         // Not a valid uid then abort
         long uid = JsonUtils.getLong( t, "uid" );
-        if( uid > 0 )
-        {
-            try
-            {
+        if( uid > 0 ) {
+            try {
                 record( uid, JsonUtils.getString( t, "remote", "" ), JsonUtils.getString( t, "useragent", "" ) );
             }
-            catch( SQLException ex )
-            {
-                // Ignore
-                ex.printStackTrace();
+            catch( SQLException ex ) {
+                Logger.getLogger( getClass().getName() ).log( Level.SEVERE, null, ex );
             }
         }
     }
@@ -61,11 +58,9 @@ public class VisitConsumer
     private void record( long uid, String remote, String userAgent )
             throws SQLException
     {
-        try( Connection con = dataSource.getConnection() )
-        {
+        try( Connection con = dataSource.getConnection() ) {
             try( PreparedStatement s = con.prepareStatement(
-                    "INSERT INTO visit (url,remote,useragent,tm) VALUES (?,remotehost(?),useragent(?),now())" ) )
-            {
+                    "INSERT INTO visit (url,remote,useragent,tm) VALUES (?,remotehost(?),useragent(?),now())" ) ) {
                 s.setLong( 1, uid );
                 s.setString( 2, remote );
                 s.setString( 3, userAgent );

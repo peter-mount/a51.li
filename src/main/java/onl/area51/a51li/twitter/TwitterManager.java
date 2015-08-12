@@ -22,6 +22,8 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
 import javax.sql.DataSource;
 import onl.area51.a51li.sql.User;
 import org.isomorphism.util.TokenBucket;
@@ -34,11 +36,10 @@ import uk.trainwatch.util.sql.SQLFunction;
  *
  * @author Peter T Mount
  */
-public enum TwitterManager
+@ApplicationScoped
+public class TwitterManager
 {
 
-    INSTANCE;
-    
     /**
      * Maximum number of tweets per window to allow
      */
@@ -54,15 +55,13 @@ public enum TwitterManager
      */
     private final TokenBucket bucket = TokenBuckets.newFixedIntervalRefill( MAX_RATE, MAX_RATE, 15, TimeUnit.MINUTES );
 
+    @Resource(name = "jdbc/links")
     private DataSource dataSource;
 
-    private final Function<Key, TwitterAccount> factory = SQLFunction.guard( key ->
-    {
-        try( Connection con = dataSource.getConnection() )
-        {
+    private final Function<Key, TwitterAccount> factory = SQLFunction.guard( key -> {
+        try( Connection con = dataSource.getConnection() ) {
 
-            try( PreparedStatement s = SQL.prepare( con, TwitterAccount.SELECT_SQL, key.getId(), key.getName() ) )
-            {
+            try( PreparedStatement s = SQL.prepare( con, TwitterAccount.SELECT_SQL, key.getId(), key.getName() ) ) {
                 return SQL.stream( s, TwitterAccount.fromSQL ).
                         findFirst().
                         orElse( null );
@@ -72,16 +71,11 @@ public enum TwitterManager
 
     private final Map<Key, TwitterAccount> accounts = new ConcurrentHashMap<>();
 
-    public void setDataSource( DataSource dataSource )
-    {
-        this.dataSource = dataSource;
-    }
-
     public void rateLimit()
     {
         bucket.tryConsume();
     }
-    
+
     public Twitter getTwitter( User user, String name )
     {
         TwitterAccount ac = getAccount( user, name );
@@ -118,21 +112,17 @@ public enum TwitterManager
         @Override
         public boolean equals( Object obj )
         {
-            if( obj == null )
-            {
+            if( obj == null ) {
                 return false;
             }
-            if( getClass() != obj.getClass() )
-            {
+            if( getClass() != obj.getClass() ) {
                 return false;
             }
             final Key other = (Key) obj;
-            if( this.id != other.id )
-            {
+            if( this.id != other.id ) {
                 return false;
             }
-            if( !Objects.equals( this.name, other.name ) )
-            {
+            if( !Objects.equals( this.name, other.name ) ) {
                 return false;
             }
             return true;

@@ -15,6 +15,7 @@
  */
 package onl.area51.a51li.sql;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import uk.trainwatch.util.sql.SQLFunction;
 
@@ -23,7 +24,10 @@ import uk.trainwatch.util.sql.SQLFunction;
  * @author Peter T Mount
  */
 public class User
+        implements Serializable
 {
+
+    private static final long serialVersionUID = 1L;
 
     public static final SQLFunction<ResultSet, User> fromSQL = rs -> new User(
             rs.getLong( 1 ),

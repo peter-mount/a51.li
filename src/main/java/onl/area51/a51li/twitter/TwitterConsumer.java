@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.json.JsonObject;
 import onl.area51.a51li.link.LinkManager;
 import onl.area51.a51li.sql.User;
@@ -32,6 +34,7 @@ import uk.trainwatch.util.JsonUtils;
  *
  * @author Peter T Mount
  */
+@ApplicationScoped
 public class TwitterConsumer
         implements Consumer<JsonObject>
 {
@@ -43,13 +46,18 @@ public class TwitterConsumer
      */
     private final Map<String, Twitter> twits = new ConcurrentHashMap<>();
 
+    @Inject
+    private TwitterManager twitterManager;
+
+    @Inject
+    private LinkManager linkManager;
+
     @Override
     public void accept( JsonObject o )
     {
         LOG.log( Level.FINE, "Received {0}", o );
 
-        if( o == null )
-        {
+        if( o == null ) {
             return;
         }
 
@@ -58,21 +66,17 @@ public class TwitterConsumer
         String tweetAs = JsonUtils.getString( o, "tweetAs", userName );
         String tweet = JsonUtils.getString( o, "tweet" );
 
-        if( userName == null || hash == null || tweetAs == null || tweet == null )
-        {
+        if( userName == null || hash == null || tweetAs == null || tweet == null ) {
             return;
         }
 
         // Allow for comma separated twitter names
-        if( tweetAs.contains( "," ) )
-        {
-            for( String as : tweetAs.split( "," ) )
-            {
+        if( tweetAs.contains( "," ) ) {
+            for( String as: tweetAs.split( "," ) ) {
                 tweet( userName, hash, as, tweet );
             }
         }
-        else
-        {
+        else {
             tweet( userName, hash, tweetAs, tweet );
         }
     }
@@ -80,30 +84,26 @@ public class TwitterConsumer
     private void tweet( String userName, String hash, String tweetAs, String tweet )
     {
 
-        User user = LinkManager.INSTANCE.getUser( userName, hash );
-        if( user == null )
-        {
+        User user = linkManager.getUser( userName, hash );
+        if( user == null ) {
             return;
         }
 
-        Twitter twitter = twits.computeIfAbsent( tweetAs, h -> TwitterManager.INSTANCE.getTwitter( user, tweetAs ) );
-        if( twitter == null )
-        {
+        Twitter twitter = twits.computeIfAbsent( tweetAs, h -> twitterManager.getTwitter( user, tweetAs ) );
+        if( twitter == null ) {
             return;
         }
 
         // Now rate limit ourselves here as we have a twitter API available to us
-        TwitterManager.INSTANCE.rateLimit();
+        twitterManager.rateLimit();
 
         // Try to tweet
-        try
-        {
+        try {
             LOG.log( Level.INFO, () -> "Tweeting @" + tweetAs + ": " + tweet );
             Status s = twitter.updateStatus( tweet );
             LOG.log( Level.INFO, () -> "Tweeted @" + tweetAs + ": " + s.getText() );
         }
-        catch( TwitterException ex )
-        {
+        catch( TwitterException ex ) {
             LOG.log( Level.SEVERE, ex, () -> "Failed to tweet " + tweetAs + ": " + tweet );
         }
 

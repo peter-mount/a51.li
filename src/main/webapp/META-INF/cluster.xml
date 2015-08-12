@@ -1,0 +1,21 @@
+<hazelcast>
+
+    <cache name="a51UrlCache">
+        <statistics-enabled>true</statistics-enabled>
+        <management-enabled>false</management-enabled>
+        <expiry-policy-factory class-name="uk.trainwatch.util.cache.HourExpiryPolicyFactory"/>
+    </cache>
+
+    <cache name="a51MemoCache">
+        <statistics-enabled>true</statistics-enabled>
+        <management-enabled>false</management-enabled>
+        <expiry-policy-factory class-name="uk.trainwatch.util.cache.HourExpiryPolicyFactory"/>
+    </cache>
+
+    <cache name="a51UserCache">
+        <statistics-enabled>true</statistics-enabled>
+        <management-enabled>false</management-enabled>
+        <expiry-policy-factory class-name="uk.trainwatch.util.cache.HourExpiryPolicyFactory"/>
+    </cache>
+        
+</hazelcast>

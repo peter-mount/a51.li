@@ -17,6 +17,7 @@ package onl.area51.a51li.filter;
 
 import java.io.IOException;
 import java.util.Optional;
+import javax.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebFilter;
@@ -31,10 +32,13 @@ import onl.area51.a51li.link.Url;
  * <p>
  * @author Peter T Mount
  */
-@WebFilter( filterName = "shortUrl", urlPatterns = "/*" )
+@WebFilter(filterName = "shortUrl", urlPatterns = "/*")
 public class ShortURLFilter
         extends AbstractFilter
 {
+
+    @Inject
+    private LinkManager linkManager;
 
     @Override
     protected void doFilter( HttpServletRequest request, HttpServletResponse response, FilterChain chain )
@@ -43,15 +47,12 @@ public class ShortURLFilter
     {
         Optional<Long> uid = URLCodec.getUID( request.getRequestURI() );
 
-        if( uid.isPresent() )
-        {
-            Url url = LinkManager.INSTANCE.getUrl( uid.get() );
-            if( url == null )
-            {
+        if( uid.isPresent() ) {
+            Url url = linkManager.getUrl( uid.get() );
+            if( url == null ) {
                 response.sendError( HttpServletResponse.SC_NOT_FOUND );
             }
-            else
-            {
+            else {
                 request.setAttribute( "url", url );
 //                if( uid.get() > 0 )
 //                {
@@ -65,8 +66,7 @@ public class ShortURLFilter
 //                }
             }
         }
-        else
-        {
+        else {
             chain.doFilter( request, response );
         }
     }

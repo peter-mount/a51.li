@@ -11,7 +11,7 @@
             </c:choose>
         </title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" href="a51.css" />
+        <link rel="stylesheet" href="//a51.li/a51.css" />
 
         <%-- Place this tag in your head or just before your close body tag. --%>
         <%--
@@ -64,6 +64,7 @@
                                         </c:choose>
                                         on <fmt:formatDate type="both" value="${url.timestamp}" dateStyle="long" timeStyle="short"/>
                                     </div>
+                                    <%--
                                     <div class="memometa">&nbsp;</div>
                                     <div class="memometa">
                                         Viewed
@@ -71,6 +72,7 @@
                                         ${count.lastMonth} this month,
                                         ${count.total} times in total.
                                     </div>
+                                    --%>
                                     <c:if test="${not empty memo.expires}">
                                         <div class="memometa">&nbsp;</div>
                                         <div class="memometa">This memo will self destruct on <fmt:formatDate type="both" value="${memo.expires}" dateStyle="long" timeStyle="short"/></div>

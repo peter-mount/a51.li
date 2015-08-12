@@ -15,6 +15,7 @@
  */
 package onl.area51.a51li.link;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import uk.trainwatch.util.sql.SQLFunction;
@@ -24,7 +25,10 @@ import uk.trainwatch.util.sql.SQLFunction;
  * @author Peter T Mount
  */
 public class Url
+        implements Serializable
 {
+
+    private static final long serialVersionUID = 1L;
 
     public static final SQLFunction<ResultSet, Url> fromSQL = rs -> new Url(
             rs.getLong( 1 ),

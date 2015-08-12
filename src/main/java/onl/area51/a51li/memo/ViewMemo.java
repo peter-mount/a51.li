@@ -20,55 +20,55 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import onl.area51.a51li.AbstractServlet;
-import onl.area51.a51li.CacheControl;
 import onl.area51.a51li.link.LinkManager;
 import onl.area51.a51li.URLCodec;
 import onl.area51.a51li.link.Url;
+import uk.trainwatch.web.util.CacheControl;
 
 /**
  *
  * @author Peter T Mount
  */
-@WebServlet( name = "viewmemo", urlPatterns = "/viewmemo/" )
+@WebServlet(name = "viewmemo", urlPatterns = "/viewmemo/")
 public class ViewMemo
         extends AbstractServlet
 {
+
+    @Inject
+    private LinkManager linkManager;
 
     @Override
     protected void doGet( HttpServletRequest req, HttpServletResponse resp, Url url )
             throws ServletException,
                    IOException
     {
-        Memo memo = LinkManager.INSTANCE.getMemo( url.getId() );
+        Memo memo = linkManager.getMemo( url.getId() );
 
         // If not removed from the db but it's expiry time has passed then treat as if it's no longer present
-        if( memo != null && memo.getExpires() != null )
-        {
+        if( memo != null && memo.getExpires() != null ) {
             LocalDateTime expires = memo.getExpires().
                     toLocalDateTime();
-            if( expires.isBefore( LocalDateTime.now() ) )
-            {
+            if( expires.isBefore( LocalDateTime.now() ) ) {
                 memo = null;
             }
         }
 
-        if( memo == null )
-        {
+        if( memo == null ) {
             // Show the removed page
             memo = Memo.REMOVED;
 
             // Change the status to gone
             resp.setStatus( HttpServletResponse.SC_GONE );
         }
-        else
-        {
+        else {
             // Log the visit
-            LinkManager.INSTANCE.recordVisit( url, req );
+            linkManager.recordVisit( url, req );
 
             // Cache it for a day
             CacheControl.DAY.addHeaders( resp );
@@ -94,8 +94,8 @@ public class ViewMemo
                           replace( 'T', ' ' ) );
 
         req.setAttribute( "memo", memo );
-        req.setAttribute( "user", LinkManager.INSTANCE.getUser( url.getUserId() ) );
-        req.setAttribute( "count", LinkManager.INSTANCE.getVisitCount( url.getId() ) );
+        req.setAttribute( "user", linkManager.getUser( url.getUserId() ) );
+        req.setAttribute( "count", linkManager.getVisitCount( url.getId() ) );
 
         req.getRequestDispatcher( "/memo.jsp" ).
                 forward( req, resp );

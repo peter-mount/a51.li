@@ -15,6 +15,11 @@
  */
 package onl.area51.a51li;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import onl.area51.a51li.link.LinkManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -22,43 +27,85 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import javax.sql.DataSource;
+import onl.area51.a51li.link.LinkGenerator;
+import onl.area51.a51li.memo.MemoGenerator;
+import onl.area51.a51li.sql.VisitConsumer;
+import onl.area51.a51li.twitter.TwitterConsumer;
 import onl.area51.a51li.twitter.TwitterManager;
+import uk.trainwatch.rabbitmq.Rabbit;
+import uk.trainwatch.rabbitmq.RabbitMQ;
+import uk.trainwatch.util.Consumers;
+import uk.trainwatch.util.sql.SQLConsumer;
 
 /**
  *
  * @author Peter T Mount
  */
 @WebListener
+@ApplicationScoped
 public class ContextListener
         implements ServletContextListener
 {
 
+    protected static final Logger LOG = Logger.getLogger( ContextListener.class.getName() );
+
+    @Inject
+    private Rabbit rabbit;
+
+    @Inject
+    private TwitterConsumer twitterConsumer;
+
+    @Inject
+    private VisitConsumer visitConsumer;
+
+    @Inject
+    private LinkGenerator linkGenerator;
+
+    @Inject
+    private MemoGenerator memoGenerator;
+
     @Override
     public void contextInitialized( ServletContextEvent sce )
     {
-        DataSource dataSource;
-        String rabbitUser, rabbitPassword, rabbitHost;
+        // Note: NO_HOSTNAME for all of these as we want multiple instances to share the same queues
 
-        try
-        {
-            dataSource = InitialContext.doLookup( "java:/comp/env/jdbc/links" );
-            rabbitUser = InitialContext.doLookup( "java:/comp/env/rabbit/a51li/user" );
-            rabbitPassword = InitialContext.doLookup( "java:/comp/env/rabbit/a51li/password" );
-            rabbitHost = InitialContext.doLookup( "java:/comp/env/rabbit/a51li/host" );
+        Map<String, Object> properties = new HashMap<>();
+        properties.put( RabbitMQ.NO_HOSTNAME, true );
+        // If on dev then listen to a dummy queue
+        if( rabbit.isDev() ) {
+            rabbit.queueConsumer( "twitter.tweetdev", "twitter.tweetdev", properties, RabbitMQ.toJsonObject, twitterConsumer );
         }
-        catch( NamingException ex )
-        {
-            throw new RuntimeException( ex );
+        else {
+            rabbit.queueDurableConsumer( "twitter.tweet", "twitter.tweet", properties, RabbitMQ.toJsonObject, twitterConsumer );
         }
 
-        TwitterManager.INSTANCE.setDataSource( dataSource );
-        LinkManager.INSTANCE.contextInitialized( dataSource, rabbitUser, rabbitPassword, rabbitHost );
+        // Background recording of visits
+        properties = new HashMap<>();
+        properties.put( RabbitMQ.NO_HOSTNAME, true );
+        rabbit.queueDurableConsumer( "a51.li.visit", "a51.li.visit", properties, RabbitMQ.toJsonObject, visitConsumer );
+
+        // Consumer that receives link create requests
+        properties = new HashMap<>();
+        properties.put( RabbitMQ.NO_HOSTNAME, true );
+        // TODO add ability to respond once we have created a link
+        rabbit.queueDurableConsumer( "a51.li.link", "a51.li.link", properties, RabbitMQ.toJsonObject, SQLConsumer.guard( m -> linkGenerator.apply( m ) ) );
+
+        // Consumer that receives memo create requests.
+        // If json contains tweet details then we also tweet
+        properties = new HashMap<>();
+        properties.put( RabbitMQ.NO_HOSTNAME, true );
+        // If on dev then use a dummy dev queue
+        if( rabbit.isDev() ) {
+            rabbit.queueConsumer( "a51.li.memodev", "a51.li.memodev", properties, RabbitMQ.toJsonObject, SQLConsumer.guard( memoGenerator ) );
+        }
+        else {
+            rabbit.queueDurableConsumer( "a51.li.memo", "a51.li.memo", properties, RabbitMQ.toJsonObject, SQLConsumer.guard( memoGenerator ) );
+        }
     }
 
     @Override
     public void contextDestroyed( ServletContextEvent sce )
     {
-        LinkManager.INSTANCE.contextDestroyed();
     }
 
 }

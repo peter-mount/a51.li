@@ -31,6 +31,12 @@
         </dependency>
         
         <dependency>
+            <groupId>uk.trainwatch.web</groupId>
+            <artifactId>web-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
             <groupId>org.twitter4j</groupId>
             <artifactId>twitter4j-core</artifactId>
             <version>4.0.2</version>
@@ -42,6 +48,12 @@
             <version>1.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.9.17</version>
+        </dependency>
+        
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
@@ -55,6 +67,34 @@
             <version>1.2</version>
         </dependency>
         
+        <!-- JBoss/Weld Refrence Implementation for CDI on a Servlet Container -->
+        <dependency>
+            <groupId>org.jboss.weld.servlet</groupId>
+            <artifactId>weld-servlet</artifactId>
+            <version>2.2.8.Final</version>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- Cannot be deployed with the webapp -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.3-1102-jdbc41</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-dbcp</artifactId>
+            <version>8.0.8</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

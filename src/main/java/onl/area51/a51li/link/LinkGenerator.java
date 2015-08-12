@@ -20,6 +20,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
 import javax.json.JsonObject;
 import javax.sql.DataSource;
 import onl.area51.a51li.URLCodec;
@@ -32,18 +34,15 @@ import uk.trainwatch.util.sql.SQLFunction;
  * <p>
  * @author Peter T Mount
  */
+@ApplicationScoped
 public class LinkGenerator
         implements SQLFunction<JsonObject, JsonObject>
 {
 
     protected static final Logger LOG = Logger.getLogger( LinkGenerator.class.getName() );
 
-    private final DataSource dataSource;
-
-    public LinkGenerator( DataSource dataSource )
-    {
-        this.dataSource = dataSource;
-    }
+    @Resource(name = "jdbc/links")
+    private DataSource dataSource;
 
     @Override
     public JsonObject apply( JsonObject t )
@@ -52,8 +51,7 @@ public class LinkGenerator
 
         LOG.log( Level.FINE, "Received {0}", t );
 
-        if( t == null )
-        {
+        if( t == null ) {
             return null;
         }
 
@@ -61,18 +59,15 @@ public class LinkGenerator
         String userName = JsonUtils.getString( t, "user" );
         String hash = JsonUtils.getString( t, "hash" );
 
-        if( url == null || userName == null || hash == null )
-        {
+        if( url == null || userName == null || hash == null ) {
             return null;
         }
 
         Long uid;
-        try( Connection con = dataSource.getConnection() )
-        {
+        try( Connection con = dataSource.getConnection() ) {
             try( PreparedStatement s = con.prepareStatement(
                     "SELECT createlink(?,?,?,?)"
-            ) )
-            {
+            ) ) {
                 s.setString( 1, url );
                 s.setString( 2, userName );
                 s.setString( 3, hash );
@@ -85,8 +80,7 @@ public class LinkGenerator
 
         LOG.log( Level.FINE, "Created uid {0}", uid );
 
-        if( uid == null )
-        {
+        if( uid == null ) {
             return null;
         }
 

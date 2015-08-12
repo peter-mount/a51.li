@@ -22,14 +22,16 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonStructure;
 import javax.sql.DataSource;
 import onl.area51.a51li.URLCodec;
+import onl.area51.a51li.twitter.TwitterConsumer;
 import uk.trainwatch.util.JsonUtils;
 import uk.trainwatch.util.sql.SQL;
 import uk.trainwatch.util.sql.SQLConsumer;
@@ -39,20 +41,18 @@ import uk.trainwatch.util.sql.SQLConsumer;
  * <p>
  * @author Peter T Mount
  */
+@ApplicationScoped
 public class MemoGenerator
         implements SQLConsumer<JsonObject>
 {
 
     protected static final Logger LOG = Logger.getLogger( MemoGenerator.class.getName() );
 
-    private final DataSource dataSource;
-    private final Consumer<? super JsonStructure> twitterConsumer;
+    @Resource(name = "jdbc/links")
+    private DataSource dataSource;
 
-    public MemoGenerator( DataSource dataSource, Consumer<? super JsonStructure> twitterConsumer )
-    {
-        this.dataSource = dataSource;
-        this.twitterConsumer = twitterConsumer;
-    }
+    @Inject
+    private TwitterConsumer twitterConsumer;
 
     @Override
     public void accept( JsonObject t )
@@ -60,8 +60,7 @@ public class MemoGenerator
     {
         LOG.log( Level.FINE, "Received {0}", t );
 
-        if( t == null )
-        {
+        if( t == null ) {
             return;
         }
 
@@ -70,8 +69,7 @@ public class MemoGenerator
         String title = JsonUtils.getString( t, "title", "Untitled" );
         String text = JsonUtils.getString( t, "text" );
 
-        if( userName == null || hash == null || text == null || text.isEmpty() )
-        {
+        if( userName == null || hash == null || text == null || text.isEmpty() ) {
             return;
         }
 
@@ -81,24 +79,20 @@ public class MemoGenerator
         LocalDateTime expires = JsonUtils.getLocalDateTime( t, "expires" );
 
         Long uid;
-        try( Connection con = dataSource.getConnection() )
-        {
+        try( Connection con = dataSource.getConnection() ) {
             try( PreparedStatement s = con.prepareStatement(
                     "SELECT creatememo(?,?,?,?,?,?)"
-            ) )
-            {
+            ) ) {
                 s.setString( 1, userName );
                 s.setString( 2, hash );
                 s.setString( 3, title );
                 s.setString( 4, text );
                 s.setInt( 5, memoType.getDbType() );
 
-                if( expires == null )
-                {
+                if( expires == null ) {
                     s.setNull( 6, Types.TIMESTAMP );
                 }
-                else
-                {
+                else {
                     s.setTimestamp( 6, Timestamp.from( expires.toInstant( ZoneOffset.UTC ) ) );
                 }
 
@@ -110,8 +104,7 @@ public class MemoGenerator
 
         LOG.log( Level.FINE, "Created uid {0}", uid );
 
-        if( uid == null )
-        {
+        if( uid == null ) {
             return;
         }
 
@@ -120,18 +113,15 @@ public class MemoGenerator
         LOG.log( Level.INFO, "Short Url {0}", shortUrl );
 
         // Also require tweeting?
-        if( t.containsKey( "tweet" ) && t.containsKey( "tweetAs" ) )
-        {
+        if( t.containsKey( "tweet" ) && t.containsKey( "tweetAs" ) ) {
             // Form the tweet
             String tweet = JsonUtils.getString( t, "tweet", title );
-            if( "Untitled".equals( tweet ) )
-            {
+            if( "Untitled".equals( tweet ) ) {
                 tweet = text;
             }
 
             // Twitter uses 21 chars for url's (as of now), so remove 30 from 140 limit to allow for room
-            if( tweet.length() > 110 )
-            {
+            if( tweet.length() > 110 ) {
                 tweet = tweet.substring( 0, 110 ) + "… ";
             }
 

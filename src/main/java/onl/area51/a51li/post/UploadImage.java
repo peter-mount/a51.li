@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Peter T Mount.
+ * Copyright 2015 peter.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,39 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package onl.area51.a51li.link;
+package onl.area51.a51li.post;
 
 import java.io.IOException;
-import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import onl.area51.a51li.AbstractServlet;
 
 /**
- * Servlet that handles a redirection request
- * <p>
- * @author Peter T Mount
+ *
+ * @author peter
  */
-@WebServlet(name = "redirector", urlPatterns = "/redirector/")
-public class UrlRedirector
-        extends AbstractServlet
+@WebServlet(name = "PostImage",urlPatterns = "/p/postImage")
+public class UploadImage
+extends HttpServlet
 {
 
-    @Inject
-    private LinkManager linkManager;
-
     @Override
-    protected void doGet( HttpServletRequest req, HttpServletResponse resp, Url url )
+    protected void doGet( HttpServletRequest req, HttpServletResponse resp )
             throws ServletException,
                    IOException
     {
-        // Issue the redirect
-        resp.sendRedirect( url.getUrl() );
-
-        // Now log the url
-        linkManager.recordVisit( url, req );
+        
+        super.doGet( req, resp ); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
 }

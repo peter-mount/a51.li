@@ -24,7 +24,7 @@
                     <h2>FAQ</h2>
                     <h3>URL Format</h3>
                     <p>
-                        All url's on this service begin with http://area51.onl/ and followed by one or more digits or letters
+                        All url's on this service begin with http://a51.li/ and followed by one or more digits or letters
                         forming the short URL ID. Note: This ID is case insensitive.
                     </p>
                     <h3>Why not use an existing third party service like <a href="//bit.ly/">bit.ly</a></h3>
