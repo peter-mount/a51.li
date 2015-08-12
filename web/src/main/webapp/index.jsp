@@ -4,7 +4,7 @@
     <head>
         <title>Area51 Short URLs</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" href="a51.css" />
+        <link rel="stylesheet" href="//a51.li/a51.css" />
 
     </head>
     <body>

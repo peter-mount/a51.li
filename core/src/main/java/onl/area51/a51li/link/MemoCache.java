@@ -19,22 +19,22 @@ import javax.cache.annotation.CacheDefaults;
 import javax.cache.annotation.CacheKey;
 import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
+import onl.area51.a51li.memo.Memo;
 
 /**
  *
  * @author peter
  */
 @ApplicationScoped
-@CacheDefaults(cacheName = "a51UrlCache")
-public class UrlCache
+@CacheDefaults(cacheName = "a51MemoCache")
+public class MemoCache
         extends AbstractCache
 {
 
     @CacheResult
-    public Url getUrl( @CacheKey long uid )
+    public Memo getMemo( @CacheKey long uid )
     {
-        System.out.println( "url " + uid );
-        return get( Math.abs( uid ), "url", Url.fromSQL );
+        return get( Math.abs( uid ), "memo", Memo.fromSQL );
     }
 
 }

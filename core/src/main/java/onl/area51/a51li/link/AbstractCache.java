@@ -38,7 +38,6 @@ public class AbstractCache
 
     protected <T> T get( long id, String table, SQLFunction<ResultSet, T> factory )
     {
-        System.out.printf( "get(%d,%s)", id, table );
         try( Connection con = dataSource.getConnection() ) {
             try( PreparedStatement s = con.prepareStatement( "SELECT * FROM " + table + " WHERE id=?" ) ) {
                 s.setLong( 1, id );
