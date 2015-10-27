@@ -20,7 +20,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.cache.annotation.CacheDefaults;
 import javax.cache.annotation.CacheKey;
 import javax.enterprise.context.ApplicationScoped;
@@ -30,6 +29,7 @@ import javax.sql.DataSource;
 import onl.area51.a51li.memo.Memo;
 import onl.area51.a51li.sql.User;
 import onl.area51.a51li.sql.VisitCount;
+import uk.trainwatch.util.sql.Database;
 import uk.trainwatch.util.sql.SQL;
 
 /**
@@ -43,7 +43,7 @@ public class LinkManager
 
     protected static final Logger LOG = Logger.getLogger( LinkManager.class.getName() );
 
-    @Resource(name = "jdbc/links")
+    @Database("links") @Inject
     private DataSource dataSource;
 
     @Inject

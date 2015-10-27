@@ -20,21 +20,15 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import onl.area51.a51li.link.LinkManager;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import javax.sql.DataSource;
 import onl.area51.a51li.link.LinkGenerator;
 import onl.area51.a51li.memo.MemoGenerator;
 import onl.area51.a51li.sql.VisitConsumer;
 import onl.area51.a51li.twitter.TwitterConsumer;
-import onl.area51.a51li.twitter.TwitterManager;
 import uk.trainwatch.rabbitmq.Rabbit;
 import uk.trainwatch.rabbitmq.RabbitMQ;
-import uk.trainwatch.util.Consumers;
 import uk.trainwatch.util.sql.SQLConsumer;
 
 /**
@@ -71,13 +65,7 @@ public class ContextListener
 
         Map<String, Object> properties = new HashMap<>();
         properties.put( RabbitMQ.NO_HOSTNAME, true );
-        // If on dev then listen to a dummy queue
-        if( rabbit.isDev() ) {
-            rabbit.queueConsumer( "twitter.tweetdev", "twitter.tweetdev", properties, RabbitMQ.toJsonObject, twitterConsumer );
-        }
-        else {
-            rabbit.queueDurableConsumer( "twitter.tweet", "twitter.tweet", properties, RabbitMQ.toJsonObject, twitterConsumer );
-        }
+        rabbit.queueDurableConsumer( "twitter.tweet", "twitter.tweet", properties, RabbitMQ.toJsonObject, twitterConsumer );
 
         // Background recording of visits
         properties = new HashMap<>();

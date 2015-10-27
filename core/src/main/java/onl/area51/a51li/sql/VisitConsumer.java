@@ -21,11 +21,12 @@ import java.sql.SQLException;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.sql.DataSource;
 import uk.trainwatch.util.JsonUtils;
+import uk.trainwatch.util.sql.Database;
 
 /**
  * Log's a visit as recorded by /redirector
@@ -37,7 +38,7 @@ public class VisitConsumer
         implements Consumer<JsonObject>
 {
 
-    @Resource(name = "jdbc/links")
+    @Database("links") @Inject
     private DataSource dataSource;
 
     @Override

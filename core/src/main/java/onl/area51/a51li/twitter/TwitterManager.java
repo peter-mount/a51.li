@@ -22,13 +22,14 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import onl.area51.a51li.sql.User;
 import org.isomorphism.util.TokenBucket;
 import org.isomorphism.util.TokenBuckets;
 import twitter4j.Twitter;
+import uk.trainwatch.util.sql.Database;
 import uk.trainwatch.util.sql.SQL;
 import uk.trainwatch.util.sql.SQLFunction;
 
@@ -55,7 +56,7 @@ public class TwitterManager
      */
     private final TokenBucket bucket = TokenBuckets.newFixedIntervalRefill( MAX_RATE, MAX_RATE, 15, TimeUnit.MINUTES );
 
-    @Resource(name = "jdbc/links")
+    @Database("links") @Inject
     private DataSource dataSource;
 
     private final Function<Key, TwitterAccount> factory = SQLFunction.guard( key -> {

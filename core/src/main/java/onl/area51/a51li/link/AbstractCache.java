@@ -20,9 +20,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
-import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import static onl.area51.a51li.link.LinkManager.LOG;
+import uk.trainwatch.util.sql.Database;
 import uk.trainwatch.util.sql.SQL;
 import uk.trainwatch.util.sql.SQLFunction;
 
@@ -33,7 +34,7 @@ import uk.trainwatch.util.sql.SQLFunction;
 public class AbstractCache
 {
 
-    @Resource(name = "jdbc/links")
+    @Database("links") @Inject
     protected DataSource dataSource;
 
     protected <T> T get( long id, String table, SQLFunction<ResultSet, T> factory )

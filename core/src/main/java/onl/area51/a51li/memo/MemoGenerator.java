@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.Json;
@@ -33,6 +32,7 @@ import javax.sql.DataSource;
 import onl.area51.a51li.URLCodec;
 import onl.area51.a51li.twitter.TwitterConsumer;
 import uk.trainwatch.util.JsonUtils;
+import uk.trainwatch.util.sql.Database;
 import uk.trainwatch.util.sql.SQL;
 import uk.trainwatch.util.sql.SQLConsumer;
 
@@ -48,7 +48,7 @@ public class MemoGenerator
 
     protected static final Logger LOG = Logger.getLogger( MemoGenerator.class.getName() );
 
-    @Resource(name = "jdbc/links")
+    @Database("links") @Inject
     private DataSource dataSource;
 
     @Inject
